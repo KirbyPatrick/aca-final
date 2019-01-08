@@ -26,16 +26,27 @@ class App extends React.Component {
     const country = e.target.elements.country.value;
     const api_call = await fetch(`http://api.openweathermap.org/data/2.5/weather?q=${city},${country}&appid=${API_KEY}&units=imperial`);
     const data = await api_call.json();
-    console.log(data);
-    this.setState({
-      //this code is tying our state to the API and telling it what to pull and update the state with
-      temperature: data.main.temp,
-      city: data.name,
-      country: data.sys.country,
-      humidity: data.main.humidity,
-      description: data.weather[0].description,
-      error: ""
-    });
+    if(city && country) {
+      this.setState({
+        //this code is tying our state to the API and telling it what to pull and update the state with
+        temperature: data.main.temp,
+        city: data.name,
+        country: data.sys.country,
+        humidity: data.main.humidity,
+        description: data.weather[0].description,
+        error: ""
+      });
+    } else {
+      this.setState({
+        //this code is tying our state to the API and telling it what to pull and update the state with
+        temperature: undefined,
+        city: undefined,
+        country: undefined,
+        humidity: undefined,
+        description: undefined,
+        error: "Please submit your location"
+      });
+    }
   }
 
 
@@ -45,7 +56,14 @@ class App extends React.Component {
       <div>
         <Titles/>
         <Form getWeather={this.getWeather}/>
-        <Weather/>
+        <Weather  //the below props allow this info to be passed from app.js, to weather.js so they can be used by the component
+          temperature={this.state.temperature}
+          city={this.state.city}
+          country={this.state.country}
+          humidity={this.state.humidity}
+          description={this.state.description} 
+          error={this.state.error}
+        />
       </div> 
     );
   }
